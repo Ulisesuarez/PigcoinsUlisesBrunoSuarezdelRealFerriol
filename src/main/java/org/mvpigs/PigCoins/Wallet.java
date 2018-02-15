@@ -45,11 +45,23 @@ public class Wallet {
         this.setAddress(pair.getPublic());
     }
 
+    public double getTotal_input() {
+        return total_input;
+    }
+
+    public double getTotal_output() {
+        return total_output;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
     @Override
     public String toString(){
-        String Cartera="\n Wallet = "+this.address.hashCode()+
-                "\n Total input = "+String.valueOf(this.total_input)+
-                "\n Total output = "+String.valueOf(this.total_output)+
-                "\n Balance = "+String.valueOf(this.balance)+"\n";
+        String Cartera="\n Wallet = "+this.getAddress().hashCode()+
+                "\n Total input = "+String.valueOf(this.getTotal_input())+
+                "\n Total output = "+String.valueOf(this.getTotal_output())+
+                "\n Balance = "+String.valueOf(this.getBalance())+"\n";
     return Cartera;}
 }
