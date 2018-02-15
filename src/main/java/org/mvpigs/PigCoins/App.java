@@ -161,6 +161,48 @@ public class App {
         wallet_2.loadOutputTransactions(bChain);
         System.out.println(wallet_2.toString());
 
+        /**
+         * Enviar pigcoins de la wallet_1 a la wallet_2
+         * Este es el flujo de trabajo que has de programar.
+         *
+         * wallet_1.sendCoins(wallet_2.getAddress(), pigcoins, message, bChain) {
+         *
+         *          collectCoins(pigcoins);
+         *          signTransaction(message);
+         *          bChain.processTransactions(pKey_sender, pKey_recipient, consumedCoins, message, signedTransaction);
+         *      };
+         *
+         * bChain.processTransactions(pKey_sender, pKey_recipient, consumedCoins, message, signedTransaction) {
+         *
+         *          isSignatureValid(public_Key, message, signedTransaction)
+         *          isConsumedCoinValid(consumedCoins);
+         *          createTransaction(pKey_sender, pKey_recipient, consumedCoins,message, signedTransaction);
+         *       }
+         *
+         * A continuacion se detalla la responsabilidad de cada metodo.
+         */
+        System.out.println("\n" + ">>>>>>>>>>>> Wallet_1 envia transaccion de pigcoins a wallet_2 >>>>>>>>>>>>" + "\n");
+        /**
+         * Primero has de recolectar los suficientes pigcoins de tu wallet
+         * Para ello has de eliminar de las transacciones entrantes de la wallet
+         * las que ya se han utilizado para enviar pigcoins
+         */
+
+        /**
+         * Los pigcoins son indivisibles, asi que si necesitas 5.2 y no tienes
+         * ninguna transaccion entrante exacta de 5.2, has de realizar un CHANGE ADDRESS (CA):
+         * Consiste en reutilizar una transaccion entrante mayor que 5.2, por ejemplo 10,
+         * y enviar dos transacciones:
+         * - una transaccion de 5.2 al destinatario
+         * - otra transaccion de 10 - 5.2 = 4.8 a ti mismo/a
+         * Ten cuidado: no puedes utilizar transacciones entrantes (pigcoins)
+         * que ya hayas enviado con anterioridad o el blockchain rechazara las nuevas
+         */
+
+        Double pigcoins = 25d;
+        Map<String, Double> consumedCoins = wallet_1.collectCoins(pigcoins);
+        System.out.println("Pigcoins enviados a la wallet_2 y transacciones consumidas: " + consumedCoins);
+
 
 
 

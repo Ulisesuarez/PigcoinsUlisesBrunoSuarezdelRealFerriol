@@ -6,6 +6,8 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Wallet {
 
@@ -134,4 +136,56 @@ public class Wallet {
 
         return this.outputTransactions;
     }
+
+    public Map<String,Double> collectCoins(Double pigcoins) {
+
+        ArrayList<Transaction>  OperativeInputs=new ArrayList<Transaction>();
+        Map<String,Double> coinsConsumedInTransaction=new HashMap<String,Double>();
+        for (Transaction trxInput: this.getInputTransactions()){
+
+            for (Transaction trxOutput:this.getOutputTransactions()){
+
+                if (!trxOutput.getPrev_hash().equals(trxInput.getHash()) && !OperativeInputs.contains(trxInput)){
+
+                    OperativeInputs.add(trxInput);
+                    System.out.println(trxInput.getHash());
+
+                }
+            }
+        }
+
+        for (Transaction trx :OperativeInputs){
+
+
+            if (trx.getPigcoins()==pigcoins){
+                coinsConsumedInTransaction.put(trx.getHash(),trx.getPigcoins());
+                return coinsConsumedInTransaction;
+
+            }
+            else{if(pigcoins<trx.getPigcoins()){
+                String hash2="CA"+trx.getHash();
+
+                coinsConsumedInTransaction.put(trx.getHash(),pigcoins);
+                coinsConsumedInTransaction.put(hash2,trx.getPigcoins()-pigcoins);
+                return coinsConsumedInTransaction;
+
+                }
+                else{if(pigcoins>trx.getPigcoins()){
+
+
+                    if (pigcoins<this.getBalance()){
+                        pigcoins=pigcoins-trx.getPigcoins();
+                        coinsConsumedInTransaction.put(trx.getHash(),trx.getPigcoins());
+                    }
+                    else{
+                        return new HashMap<String,Double>();
+                    }
+
+
+                    }
+                }
+            }
+        }
+
+    return coinsConsumedInTransaction;}
 }

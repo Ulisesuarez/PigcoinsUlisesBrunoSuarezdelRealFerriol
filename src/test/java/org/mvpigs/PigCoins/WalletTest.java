@@ -44,4 +44,8 @@ public class WalletTest {
 
 
     }
+
+    @Test
+    public void collectCoins() {
+    }
 }
