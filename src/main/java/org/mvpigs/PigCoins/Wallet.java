@@ -148,7 +148,7 @@ public class Wallet {
                 if (!trxOutput.getPrev_hash().equals(trxInput.getHash()) && !OperativeInputs.contains(trxInput)){
 
                     OperativeInputs.add(trxInput);
-                    System.out.println(trxInput.getHash());
+
 
                 }
             }
@@ -188,4 +188,11 @@ public class Wallet {
         }
 
     return coinsConsumedInTransaction;}
+
+    public byte[] signTransaction(String message) {
+        return GenSig.sign(this.SKey,message);
+    }
+
+    public void sendCoins(PublicKey address, Double pigcoins, String message, BlockChain bChain) {
+    }
 }
