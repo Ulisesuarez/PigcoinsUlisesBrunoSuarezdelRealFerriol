@@ -26,4 +26,8 @@ public class BlockChain {
             System.out.println("\n"+trx.toString()+"\n");
         }
     }
+
+    public void summarize(Integer position) {
+        System.out.println("\n"+this.getBlockChain().get(position).toString()+"\n");
+    }
 }
