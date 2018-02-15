@@ -57,6 +57,7 @@ public class BlockChain {
     private boolean isSignatureValid(PublicKey pKey_sender, String message, byte[] signedTransaction) {
     return GenSig.verify(pKey_sender,message,signedTransaction);}
 
+
     private boolean isConsumedCoinValid(Map<String, Double> consumedCoins) {
         for (Transaction trx :this.getBlockChain()){
             for (Map.Entry entry :consumedCoins.entrySet()){
