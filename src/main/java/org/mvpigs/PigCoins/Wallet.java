@@ -11,11 +11,11 @@ public class Wallet {
 
 
 
-    private PrivateKey SKey;
-    private PublicKey address;
-    private double total_input;
-    private double total_output;
-    private double balance;
+    private PrivateKey SKey=null;
+    private PublicKey address=null;
+    private double total_input=0d;
+    private double total_output=0d;
+    private double balance=0d;
     private ArrayList<Transaction> inputTransactions;
     private ArrayList<Transaction> outputTransactions;
 
@@ -82,6 +82,8 @@ public class Wallet {
     }
 
     public void loadCoins(BlockChain bChain) {
+        this.total_input=0;
+        this.total_output=0;
         for (Transaction trx :bChain.getBlockChain()){
 
             if (trx.getPkey_recipient().hashCode()==this.getAddress().hashCode()){
