@@ -12,9 +12,9 @@ public class Wallet {
 
     private PrivateKey SKey;
     private PublicKey address;
-    private int total_input;
-    private int total_output;
-    private int balance;
+    private double total_input;
+    private double total_output;
+    private double balance;
     private Transaction[] inputTransactions;
     private Transaction[] outputTransactions;
 
@@ -44,4 +44,12 @@ public class Wallet {
         this.setSK(pair.getPrivate());
         this.setAddress(pair.getPublic());
     }
+
+    @Override
+    public String toString(){
+        String Cartera="\n Wallet = "+this.address.hashCode()+
+                "\n Total input = "+String.valueOf(this.total_input)+
+                "\n Total output = "+String.valueOf(this.total_output)+
+                "\n Balance = "+String.valueOf(this.balance)+"\n";
+    return Cartera;}
 }
