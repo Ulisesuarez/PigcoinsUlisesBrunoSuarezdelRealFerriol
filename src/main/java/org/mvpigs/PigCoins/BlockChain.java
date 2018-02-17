@@ -1,5 +1,7 @@
 package org.mvpigs.PigCoins;
 
+import jdk.internal.util.xml.impl.Pair;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -36,37 +38,65 @@ public class BlockChain {
     public void processTransactions(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String,Double> consumedCoins, String message,byte[] signedTransaction){
 
 
-        if(isConsumedCoinValid(consumedCoins) && isSignatureValid(pKey_sender, message, signedTransaction)){
+        if(isConsumedCoinValid(consumedCoins,pKey_sender) && isSignatureValid(pKey_sender, message, signedTransaction)){
 
             createTransaction(pKey_sender, pKey_recipient, consumedCoins, message, signedTransaction);
 
         }
+
+
+
+
+
+
+
     }
 
     private void createTransaction(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String, Double> consumedCoins, String message, byte[] signedTransaction) {
 
-        for (Map.Entry consumed :consumedCoins.entrySet()){
+        for ( Map.Entry consumed :consumedCoins.entrySet()){
 
-            Transaction trx=new Transaction("mock",consumed.getKey().toString(),pKey_sender,pKey_recipient,consumed.getValue(),message);
+
+
+
+            String hashName="hash_"+String.valueOf(this.getBlockChain().size()+1);
+            if (consumed.getKey().toString().substring(0,2).equals("CA")){
+                pKey_recipient=pKey_sender;
+
+            }
+            Transaction trx=new Transaction(hashName,consumed.getKey().toString(),pKey_sender,pKey_recipient,Double.valueOf(consumed.getValue().toString()),message);
+            trx.setSignature(signedTransaction);
+
             addOrigin(trx);
         }
 
 
     }
 
-    private boolean isSignatureValid(PublicKey pKey_sender, String message, byte[] signedTransaction) {
+    protected boolean isSignatureValid(PublicKey pKey_sender, String message, byte[] signedTransaction) {
     return GenSig.verify(pKey_sender,message,signedTransaction);}
 
 
-    private boolean isConsumedCoinValid(Map<String, Double> consumedCoins) {
+    protected boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
         for (Transaction trx :this.getBlockChain()){
             for (Map.Entry entry :consumedCoins.entrySet()){
 
-                if(entry.getKey().equals(trx.getHash())){
+                if(transaccionEnviadaAOtro(pKey_sender, trx, entry) ||transaccionNoEnCartera(pKey_sender, trx, entry)){
+
 
                     return false;
                 }
+
+
             }
         }
     return true;}
+
+    private boolean transaccionEnviadaAOtro(PublicKey pKey_sender, Transaction trx, Map.Entry entry) {
+        return entry.getKey().equals(trx.getPrev_hash()) && trx.getPkey_sender().hashCode()==pKey_sender.hashCode()&& trx.getPkey_recipient().hashCode()!=pKey_sender.hashCode();
+    }
+
+    private boolean transaccionNoEnCartera(PublicKey pKey_sender, Transaction trx, Map.Entry entry) {
+        return entry.getKey().equals(trx.getHash())&& pKey_sender.hashCode()!=trx.getPkey_recipient().hashCode();
+    }
 }

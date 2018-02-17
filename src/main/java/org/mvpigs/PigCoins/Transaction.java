@@ -53,6 +53,10 @@ public class Transaction {
         return message;
     }
 
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
+
     @Override
     public String toString(){
         String Transaccion="\n hash =  "+this.getHash()+
@@ -66,4 +70,23 @@ public class Transaction {
 
 
     }
+
+    @Override
+    public boolean equals(Object object){
+        boolean sameSame = false;
+
+        if (object != null && object instanceof Transaction)
+        {
+            sameSame = this.getHash().equals(((Transaction) object).getHash());
+        }
+
+        return sameSame;
+
+    }
+    @Override
+    public int hashCode(){
+
+
+
+    return Integer.valueOf(this.getHash().substring(this.getHash().length()-1));}
 }

@@ -59,6 +59,7 @@ public class Wallet {
     }
 
     public double getBalance() {
+
         return balance;
     }
 
@@ -76,25 +77,33 @@ public class Wallet {
     return Cartera;}
 
     public void setTotal_input(double total_input) {
-        this.total_input = this.total_input+total_input;
+        this.total_input = total_input;
     }
 
     public void setTotal_output(double total_output) {
+        this.total_output =total_output;
+    }
+
+    public void addTotal_input(double total_input) {
+        this.total_input = this.total_input+total_input;
+    }
+
+    public void addTotal_output(double total_output) {
         this.total_output =this.total_output+total_output;
     }
 
     public void loadCoins(BlockChain bChain) {
-        this.total_input=0;
-        this.total_output=0;
+        this.setTotal_input(0);
+        this.setTotal_output(0);
         for (Transaction trx :bChain.getBlockChain()){
 
             if (trx.getPkey_recipient().hashCode()==this.getAddress().hashCode()){
 
-                this.setTotal_input(trx.getPigcoins());
+                this.addTotal_input(trx.getPigcoins());
             }
             if (trx.getPkey_sender().hashCode()==this.getAddress().hashCode()){
 
-                this.setTotal_output(trx.getPigcoins());
+                this.addTotal_output(trx.getPigcoins());
             }
 
         }
@@ -102,7 +111,7 @@ public class Wallet {
     }
 
     public void loadInputTransactions(BlockChain bChain) {
-
+        this.inputTransactions=new ArrayList<Transaction>();
         for (Transaction trx :bChain.getBlockChain()){
 
             if (trx.getPkey_recipient().hashCode()==this.getAddress().hashCode()){
@@ -120,6 +129,7 @@ public class Wallet {
     return this.inputTransactions;}
 
     public void loadOutputTransactions(BlockChain bChain) {
+        this.outputTransactions=new ArrayList<Transaction>();
         for (Transaction trx :bChain.getBlockChain()){
 
             if (trx.getPkey_sender().hashCode()==this.getAddress().hashCode()){
@@ -139,22 +149,42 @@ public class Wallet {
 
     public Map<String,Double> collectCoins(Double pigcoins) {
 
-        ArrayList<Transaction>  OperativeInputs=new ArrayList<Transaction>();
+                ArrayList<Transaction>  operativeInputs=new ArrayList<Transaction>();
+        ArrayList<Transaction>  nonOperativeInputs=new ArrayList<Transaction>();
+
         Map<String,Double> coinsConsumedInTransaction=new HashMap<String,Double>();
-        for (Transaction trxInput: this.getInputTransactions()){
+        for (Transaction trxOutput:this.getOutputTransactions()){
+            for (Transaction trxInput: this.getInputTransactions()){
 
-            for (Transaction trxOutput:this.getOutputTransactions()){
 
-                if (!trxOutput.getPrev_hash().equals(trxInput.getHash()) && !OperativeInputs.contains(trxInput)){
 
-                    OperativeInputs.add(trxInput);
+
+
+
+
+
+
+
+
+                if (trxOutput.getPrev_hash().equals(trxInput.getHash())){
+                    nonOperativeInputs.add(trxInput);
+                    if (operativeInputs.contains(trxInput)){
+                    operativeInputs.remove(trxInput);}
+                }
+
+
+
+                if (!nonOperativeInputs.contains(trxInput) && !operativeInputs.contains(trxInput)){
+
+                    operativeInputs.add(trxInput);
 
 
                 }
+
             }
         }
 
-        for (Transaction trx :OperativeInputs){
+        for (Transaction trx :operativeInputs){
 
 
             if (trx.getPigcoins()==pigcoins){
@@ -190,9 +220,15 @@ public class Wallet {
     return coinsConsumedInTransaction;}
 
     public byte[] signTransaction(String message) {
+
         return GenSig.sign(this.SKey,message);
     }
 
     public void sendCoins(PublicKey address, Double pigcoins, String message, BlockChain bChain) {
+
+        byte[] signedTransaction = this.signTransaction(message);
+        Map<String, Double> collectedCoins = this.collectCoins(pigcoins);
+
+        bChain.processTransactions(this.address,address,collectedCoins,message,signedTransaction);
     }
 }
