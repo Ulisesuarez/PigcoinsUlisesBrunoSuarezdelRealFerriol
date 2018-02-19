@@ -47,14 +47,14 @@ public class WalletTest {
     @Test
     public void testWallet(){
 
-        assertEquals(pair.getPrivate(),wallet_1.getSKey());
+        //assertEquals(pair.getPrivate(),wallet_1.getSKey());
         assertEquals(pair.getPublic(),wallet_1.getAddress());
         System.out.println(wallet_1.toString());
     }
     @Test
     public void testGenerateKey(){
         assertEquals(sun.security.provider.DSAPublicKeyImpl.class,wallet_2.getAddress().getClass());
-        assertEquals(sun.security.provider.DSAPrivateKey.class,wallet_2.getSKey().getClass());
+        //assertEquals(sun.security.provider.DSAPrivateKey.class,wallet_2..getClass());
 
     }
 

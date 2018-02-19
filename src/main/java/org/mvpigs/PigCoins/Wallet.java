@@ -1,6 +1,6 @@
 package org.mvpigs.PigCoins;
 
-import com.sun.xml.internal.fastinfoset.util.CharArray;
+
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -21,9 +21,9 @@ public class Wallet {
     private ArrayList<Transaction> inputTransactions;
     private ArrayList<Transaction> outputTransactions;
 
-    public Wallet(){
-        this.inputTransactions= new ArrayList<Transaction>();
-        this.outputTransactions= new ArrayList<Transaction>();
+    Wallet(){
+        this.inputTransactions= new ArrayList<>();
+        this.outputTransactions= new ArrayList<>();
 
     }
 
@@ -39,11 +39,9 @@ public class Wallet {
         return address;
     }
 
-    public PrivateKey getSKey() {
-        return SKey;
-    }
 
-    public void generateKeyPair(){
+
+     void generateKeyPair(){
 
         KeyPair pair = GenSig.generateKeyPair();
         this.setSK(pair.getPrivate());
@@ -63,161 +61,121 @@ public class Wallet {
         return balance;
     }
 
-    public void setBalance(){
+    private void setBalance(){
 
         this.balance=this.getTotal_input()-this.getTotal_output();
     }
 
     @Override
     public String toString(){
-        String Cartera="\n Wallet = "+this.getAddress().hashCode()+
+        return "\n Wallet = "+ this.getAddress().hashCode()+
                 "\n Total input = "+String.valueOf(this.getTotal_input())+
                 "\n Total output = "+String.valueOf(this.getTotal_output())+
-                "\n Balance = "+String.valueOf(this.getBalance())+"\n";
-    return Cartera;}
+                "\n Balance = "+String.valueOf(this.getBalance())+"\n";}
 
-    public void setTotal_input(double total_input) {
+    private void setTotal_input(double total_input) {
         this.total_input = total_input;
     }
 
-    public void setTotal_output(double total_output) {
+    private void setTotal_output(double total_output) {
         this.total_output =total_output;
     }
 
-    public void addTotal_input(double total_input) {
-        this.total_input = this.total_input+total_input;
-    }
-
-    public void addTotal_output(double total_output) {
-        this.total_output =this.total_output+total_output;
-    }
-
     public void loadCoins(BlockChain bChain) {
-        this.setTotal_input(0);
-        this.setTotal_output(0);
-        for (Transaction trx :bChain.getBlockChain()){
-
-            if (trx.getPkey_recipient().hashCode()==this.getAddress().hashCode()){
-
-                this.addTotal_input(trx.getPigcoins());
-            }
-            if (trx.getPkey_sender().hashCode()==this.getAddress().hashCode()){
-
-                this.addTotal_output(trx.getPigcoins());
-            }
-
-        }
+        this.setTotal_input(bChain.loadWallet(this.getAddress())[0]);
+        this.setTotal_output(bChain.loadWallet(this.getAddress())[1]);
         this.setBalance();
     }
 
     public void loadInputTransactions(BlockChain bChain) {
-        this.inputTransactions=new ArrayList<Transaction>();
-        for (Transaction trx :bChain.getBlockChain()){
 
-            if (trx.getPkey_recipient().hashCode()==this.getAddress().hashCode()){
-
-                this.inputTransactions.add(trx);
-            }
-
-        }
+        this.inputTransactions=bChain.loadInputTransactions(this.getAddress());
     }
 
     public ArrayList<Transaction> getInputTransactions() {
 
-
-
-    return this.inputTransactions;}
-
-    public void loadOutputTransactions(BlockChain bChain) {
-        this.outputTransactions=new ArrayList<Transaction>();
-        for (Transaction trx :bChain.getBlockChain()){
-
-            if (trx.getPkey_sender().hashCode()==this.getAddress().hashCode()){
-
-                this.outputTransactions.add(trx);
-            }
-
-        }
-
+        return this.inputTransactions;
     }
 
-    public ArrayList<Transaction> getOutputTransactions() {
+    public void loadOutputTransactions(BlockChain bChain) {
 
+        this.outputTransactions=bChain.loadOutputTransactions(this.getAddress());
+    }
+
+
+
+    public ArrayList<Transaction> getOutputTransactions() {
 
         return this.outputTransactions;
     }
 
     public Map<String,Double> collectCoins(Double pigcoins) {
 
-                ArrayList<Transaction>  operativeInputs=new ArrayList<Transaction>();
-        ArrayList<Transaction>  nonOperativeInputs=new ArrayList<Transaction>();
+        ArrayList<Transaction>  operativeInputs=new ArrayList<>();
+        ArrayList<Transaction>  nonOperativeInputs=new ArrayList<>();
+        Map<String,Double> coinsConsumedInTransaction=new HashMap<>();
 
-        Map<String,Double> coinsConsumedInTransaction=new HashMap<String,Double>();
-        for (Transaction trxOutput:this.getOutputTransactions()){
-            for (Transaction trxInput: this.getInputTransactions()){
+        for (Transaction outputTransactions:this.getOutputTransactions()){
 
-
-
+            for (Transaction inputTransaction: this.getInputTransactions()){
 
 
+                if (outputTransactions.getPrev_hash().equals(inputTransaction.getHash())){
 
+                    nonOperativeInputs.add(inputTransaction);
 
+                    if (operativeInputs.contains(inputTransaction)){
 
-
-
-
-                if (trxOutput.getPrev_hash().equals(trxInput.getHash())){
-                    nonOperativeInputs.add(trxInput);
-                    if (operativeInputs.contains(trxInput)){
-                    operativeInputs.remove(trxInput);}
+                        operativeInputs.remove(inputTransaction);
+                    }
                 }
 
+                if (!nonOperativeInputs.contains(inputTransaction) && !operativeInputs.contains(inputTransaction)){
 
-
-                if (!nonOperativeInputs.contains(trxInput) && !operativeInputs.contains(trxInput)){
-
-                    operativeInputs.add(trxInput);
-
-
+                    operativeInputs.add(inputTransaction);
                 }
 
             }
         }
 
-        for (Transaction trx :operativeInputs){
+        for (Transaction transaction : operativeInputs){
 
 
-            if (trx.getPigcoins()==pigcoins){
-                coinsConsumedInTransaction.put(trx.getHash(),trx.getPigcoins());
+            if (transaction.getPigcoins() == pigcoins){
+
+                coinsConsumedInTransaction.put(transaction.getHash(),transaction.getPigcoins());
                 return coinsConsumedInTransaction;
 
             }
-            else{if(pigcoins<trx.getPigcoins()){
-                String hash2="CA"+trx.getHash();
+            else{
+                if(pigcoins<transaction.getPigcoins()){
 
-                coinsConsumedInTransaction.put(trx.getHash(),pigcoins);
-                coinsConsumedInTransaction.put(hash2,trx.getPigcoins()-pigcoins);
-                return coinsConsumedInTransaction;
+                    String hash2="CA"+transaction.getHash();
+                    coinsConsumedInTransaction.put(transaction.getHash(),pigcoins);
+                    coinsConsumedInTransaction.put(hash2,transaction.getPigcoins()-pigcoins);
+                    return coinsConsumedInTransaction;
 
                 }
-                else{if(pigcoins>trx.getPigcoins()){
+                else{
+                    if(pigcoins>transaction.getPigcoins()){
 
 
-                    if (pigcoins<this.getBalance()){
-                        pigcoins=pigcoins-trx.getPigcoins();
-                        coinsConsumedInTransaction.put(trx.getHash(),trx.getPigcoins());
-                    }
-                    else{
-                        return new HashMap<String,Double>();
-                    }
+                        if (pigcoins<this.getBalance()){
 
-
+                            pigcoins=pigcoins-transaction.getPigcoins();
+                            coinsConsumedInTransaction.put(transaction.getHash(),transaction.getPigcoins());
+                        }
+                        else{
+                            coinsConsumedInTransaction=new HashMap<>();
+                            return coinsConsumedInTransaction;
+                        }
                     }
                 }
             }
         }
 
-    return coinsConsumedInTransaction;}
+        return coinsConsumedInTransaction;
+    }
 
     public byte[] signTransaction(String message) {
 
