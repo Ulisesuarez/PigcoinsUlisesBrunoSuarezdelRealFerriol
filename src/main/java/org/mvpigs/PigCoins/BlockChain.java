@@ -33,7 +33,8 @@ public class BlockChain {
     public void summarize(Integer position) {
         System.out.println("\n"+this.getBlockChain().get(position).toString()+"\n");
     }
-    public void processTransactions(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String,Double> consumedCoins, String message,byte[] signedTransaction){
+    public void processTransactions(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String,Double> consumedCoins,
+                                    String message,byte[] signedTransaction){
 
 
         if(isConsumedCoinValid(consumedCoins,pKey_sender) && isSignatureValid(pKey_sender, message, signedTransaction)){
@@ -43,20 +44,21 @@ public class BlockChain {
         }
     }
 
-    private void createTransaction(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String, Double> consumedCoins, String message, byte[] signedTransaction) {
+    private void createTransaction(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String, Double> consumedCoins,
+                                   String message, byte[] signedTransaction) {
 
-        for ( Map.Entry consumed :consumedCoins.entrySet()){
-
-
-
+        for ( Map.Entry consumedCoin :consumedCoins.entrySet()){
 
             String hashName="hash_"+String.valueOf(this.getBlockChain().size()+1);
-            if (consumed.getKey().toString().substring(0,2).equals("CA")){
+
+            if (consumedCoin.getKey().toString().substring(0,2).equals("CA")){
 
                 pKey_recipient=pKey_sender;
 
             }
-            Transaction transaction=new Transaction(hashName,consumed.getKey().toString(),pKey_sender,pKey_recipient,Double.valueOf(consumed.getValue().toString()),message);
+
+            Transaction transaction=new Transaction(hashName,consumedCoin.getKey().toString(),pKey_sender,pKey_recipient,
+                                        Double.valueOf(consumedCoin.getValue().toString()),message);
             transaction.setSignature(signedTransaction);
 
             addOrigin(transaction);
@@ -65,15 +67,17 @@ public class BlockChain {
 
     }
 
-    protected boolean isSignatureValid(PublicKey pKey_sender, String message, byte[] signedTransaction) {
+    boolean isSignatureValid(PublicKey pKey_sender, String message, byte[] signedTransaction) {
     return GenSig.verify(pKey_sender,message,signedTransaction);}
 
 
-    protected boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
-        for (Transaction trx :this.getBlockChain()){
-            for (Map.Entry entry :consumedCoins.entrySet()){
+   boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
+        for (Transaction transaction :this.getBlockChain()){
+            for (Map.Entry consumedCoin :consumedCoins.entrySet()){
 
-                if(transaccionEnviadaAOtro(pKey_sender, trx, entry) ||transaccionNoEnWallet(pKey_sender, trx, entry)){
+                if      (transaccionEnviadaAOtro(pKey_sender, transaction, consumedCoin)
+                        ||
+                        transaccionNoEnWallet(pKey_sender, transaction, consumedCoin)){
 
 
                     return false;
@@ -83,6 +87,22 @@ public class BlockChain {
             }
         }
     return true;}
+
+    /* boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
+
+        for (Transaction transaction :this.getBlockChain()) {
+            for (Map.Entry consumedCoin : consumedCoins.entrySet()) {
+
+                if (transaction.getPrev_hash().equals(consumedCoin.getKey().toString())) {
+
+
+                    return false;
+                }
+
+
+            }
+        }
+        return true;}*/
 
 
     public ArrayList<Transaction> loadInputTransactions(PublicKey address){
@@ -110,7 +130,7 @@ public class BlockChain {
             }
         }
         return outputTransactions;
-    } //carga en la wallet las transacciones que tienen como origen esa dirección o clave pública.
+    }
 
     public double[] loadWallet(PublicKey address){
         double[] inputsAndOutputs=new double[2];
@@ -134,14 +154,19 @@ public class BlockChain {
         return  inputsAndOutputs;
 
 
-    } //carga en la wallet los pigcoins envidos y recibidos en esa dirección.
-
-
-    private boolean transaccionEnviadaAOtro(PublicKey pKey_sender, Transaction trx, Map.Entry entry) {
-        return entry.getKey().equals(trx.getPrev_hash()) && trx.getPkey_sender().hashCode()==pKey_sender.hashCode()&& trx.getPkey_recipient().hashCode()!=pKey_sender.hashCode();
     }
 
-    private boolean transaccionNoEnWallet(PublicKey pKey_sender, Transaction trx, Map.Entry entry) {
-        return entry.getKey().equals(trx.getHash())&& pKey_sender.hashCode()!=trx.getPkey_recipient().hashCode();
+    private boolean transaccionEnviadaAOtro(PublicKey pKey_sender, Transaction transaction, Map.Entry consumedCoin) {
+        return  consumedCoin.getKey().equals(transaction.getPrev_hash())
+                &&
+                transaction.getPkey_sender().hashCode()==pKey_sender.hashCode()
+                &&
+                transaction.getPkey_recipient().hashCode()!=pKey_sender.hashCode();
+    }
+
+    private boolean transaccionNoEnWallet(PublicKey pKey_sender, Transaction transaction, Map.Entry consumedCoin) {
+        return  consumedCoin.getKey().equals(transaction.getHash())
+                &&
+                pKey_sender.hashCode()!= transaction.getPkey_recipient().hashCode();
     }
 }
