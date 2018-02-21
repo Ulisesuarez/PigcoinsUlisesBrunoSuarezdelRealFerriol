@@ -86,16 +86,16 @@ public class BlockChainTest {
         consumedCoins.putIfAbsent("hash_1", 20d);
 
 
-        assertEquals(false, bChain.isConsumedCoinValid(consumedCoins, wallet_1.getAddress()));
-        assertEquals(false, bChain.isConsumedCoinValid(consumedCoins, wallet_2.getAddress()));
+        assertEquals(false, bChain.isConsumedCoinValid(consumedCoins));//, wallet_1.getAddress()));
+        assertEquals(false, bChain.isConsumedCoinValid(consumedCoins));//, wallet_2.getAddress()));
         consumedCoins = new HashMap<String, Double>();
         consumedCoins.putIfAbsent("hash_5", 2d);
-        assertEquals(false, bChain.isConsumedCoinValid(consumedCoins, wallet_2.getAddress()));
-        assertEquals(true, bChain.isConsumedCoinValid(consumedCoins, wallet_1.getAddress()));
+        assertEquals(true, bChain.isConsumedCoinValid(consumedCoins));//, wallet_2.getAddress()));
+        //assertEquals(true, bChain.isConsumedCoinValid(consumedCoins));//, wallet_1.getAddress()));
         consumedCoins = new HashMap<String, Double>();
         consumedCoins.putIfAbsent("hash_2", 2d);
-        assertEquals(false, bChain.isConsumedCoinValid(consumedCoins, wallet_1.getAddress()));
-        assertEquals(true, bChain.isConsumedCoinValid(consumedCoins, wallet_2.getAddress()));
+        //  assertEquals(true, bChain.isConsumedCoinValid(consumedCoins));//, wallet_1.getAddress()));
+        assertEquals(true, bChain.isConsumedCoinValid(consumedCoins));//, wallet_2.getAddress()));
 
 
     }

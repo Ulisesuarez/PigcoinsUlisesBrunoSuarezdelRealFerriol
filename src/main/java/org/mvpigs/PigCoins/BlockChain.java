@@ -37,7 +37,7 @@ public class BlockChain {
                                     String message,byte[] signedTransaction){
 
 
-        if(isConsumedCoinValid(consumedCoins,pKey_sender) && isSignatureValid(pKey_sender, message, signedTransaction)){
+        if(isConsumedCoinValid(consumedCoins) && isSignatureValid(pKey_sender, message, signedTransaction)){
 
             createTransaction(pKey_sender, pKey_recipient, consumedCoins, message, signedTransaction);
 
@@ -71,7 +71,7 @@ public class BlockChain {
     return GenSig.verify(pKey_sender,message,signedTransaction);}
 
 
-   boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
+   /*boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
         for (Transaction transaction :this.getBlockChain()){
             for (Map.Entry consumedCoin :consumedCoins.entrySet()){
 
@@ -86,9 +86,9 @@ public class BlockChain {
 
             }
         }
-    return true;}
+    return true;}*/
 
-    /* boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
+     boolean isConsumedCoinValid(Map<String, Double> consumedCoins) {
 
         for (Transaction transaction :this.getBlockChain()) {
             for (Map.Entry consumedCoin : consumedCoins.entrySet()) {
@@ -102,7 +102,7 @@ public class BlockChain {
 
             }
         }
-        return true;}*/
+        return true;}
 
 
     public ArrayList<Transaction> loadInputTransactions(PublicKey address){
