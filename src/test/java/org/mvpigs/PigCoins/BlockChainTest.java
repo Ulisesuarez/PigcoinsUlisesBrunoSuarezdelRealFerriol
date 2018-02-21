@@ -108,3 +108,32 @@ public class BlockChainTest {
 
         }
 }
+
+/*private boolean transaccionEnviadaAOtro(PublicKey pKey_sender, Transaction transaction, Map.Entry consumedCoin) {
+        return  consumedCoin.getKey().equals(transaction.getPrev_hash())
+                &&
+                transaction.getPkey_sender().hashCode()==pKey_sender.hashCode()
+                &&
+                transaction.getPkey_recipient().hashCode()!=pKey_sender.hashCode();
+    }
+
+    private boolean transaccionNoEnWallet(PublicKey pKey_sender, Transaction transaction, Map.Entry consumedCoin) {
+        return  consumedCoin.getKey().equals(transaction.getHash())
+                &&
+                pKey_sender.hashCode()!= transaction.getPkey_recipient().hashCode();
+    }   boolean isConsumedCoinValid(Map<String, Double> consumedCoins,PublicKey pKey_sender) {
+        for (Transaction transaction :this.getBlockChain()){
+            for (Map.Entry consumedCoin :consumedCoins.entrySet()){
+
+                if      (transaccionEnviadaAOtro(pKey_sender, transaction, consumedCoin)
+                        ||
+                        transaccionNoEnWallet(pKey_sender, transaction, consumedCoin)){
+
+
+                    return false;
+                }
+
+
+            }
+        }
+    return true;}*/
