@@ -103,7 +103,8 @@ public class BlockChainTest {
             public void testIsSignatureValid(){
         byte[] signedTransaction=wallet_1.signTransaction("bla");
         assertEquals(true,bChain.isSignatureValid(wallet_1.getAddress(),"bla",signedTransaction));
-        assertEquals(false,bChain.isSignatureValid(wallet_1.getAddress(),"bsa",signedTransaction));
+        assertEquals(false,bChain.isSignatureValid(wallet_1.getAddress(),"bLa",signedTransaction));
+        assertEquals(false,bChain.isSignatureValid(wallet_2.getAddress(),"bla",signedTransaction));
 
         }
 }
