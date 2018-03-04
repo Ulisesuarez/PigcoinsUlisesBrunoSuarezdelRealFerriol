@@ -3,6 +3,7 @@ package org.mvpigs.PigCoins;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class BlockChain {
@@ -91,29 +92,20 @@ public class BlockChain {
 
 
     public ArrayList<Transaction> loadInputTransactions(PublicKey address){
-        ArrayList<Transaction> inputTransactions=new ArrayList<>();
-        for (Transaction transaction :this.getBlockChain()){
 
-            if (transaction.getPkey_recipient().hashCode()==address.hashCode()){
 
-                inputTransactions.add(transaction);
-            }
+        ArrayList<Transaction> inputTransactions=this.getBlockChain().stream().filter(transaction -> transaction.
+                getPkey_recipient().equals(address)).collect(Collectors.toCollection(ArrayList<Transaction>::new));
 
-        }
     return inputTransactions;
     }
 
 
     public ArrayList<Transaction> loadOutputTransactions(PublicKey address){
-        ArrayList<Transaction> outputTransactions=new ArrayList<>();
+        ArrayList<Transaction> outputTransactions=this.getBlockChain().stream().filter(transaction -> transaction.
+                getPkey_sender().equals(address)).collect(Collectors.toCollection(ArrayList::new));
 
-        for (Transaction transaction :this.getBlockChain()) {
 
-            if (transaction.getPkey_sender().hashCode() == address.hashCode()) {
-
-                outputTransactions.add(transaction);
-            }
-        }
         return outputTransactions;
     }
 
