@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.mvpigs.PigCoins</OriginalElement>
+  <nodes>
+    <node x="15.300000000000011" y="0.0">org.mvpigs.PigCoins.Transaction</node>
+    <node x="22.950000000000045" y="323.0">org.mvpigs.PigCoins.BlockChain</node>
+    <node x="436.17500000000007" y="84.5">org.mvpigs.PigCoins.GenSig</node>
+    <node x="0.0" y="718.0">org.mvpigs.PigCoins.Wallet</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.mvpigs.PigCoins.Wallet" target="org.mvpigs.PigCoins.GenSig">
+      <point x="165.375" y="-208.5" />
+      <point x="385.875" y="698.0" />
+      <point x="691.9250000000001" y="698.0" />
+      <point x="85.25" y="52.0" />
+    </edge>
+    <edge source="org.mvpigs.PigCoins.BlockChain" target="org.mvpigs.PigCoins.Transaction">
+      <point x="-240.75" y="-172.5" />
+      <point x="103.20000000000005" y="303.0" />
+      <point x="130.8" y="303.0" />
+      <point x="0.0" y="136.5" />
+    </edge>
+    <edge source="org.mvpigs.PigCoins.Wallet" target="org.mvpigs.PigCoins.BlockChain">
+      <point x="55.125" y="-208.5" />
+      <point x="275.625" y="698.0" />
+      <point x="343.95000000000005" y="698.0" />
+      <point x="0.0" y="172.5" />
+    </edge>
+    <edge source="org.mvpigs.PigCoins.BlockChain" target="org.mvpigs.PigCoins.GenSig">
+      <point x="240.75" y="-172.5" />
+      <point x="584.7" y="303.0" />
+      <point x="521.4250000000001" y="303.0" />
+      <point x="-85.25" y="52.0" />
+    </edge>
+    <edge source="org.mvpigs.PigCoins.Wallet" target="org.mvpigs.PigCoins.Transaction">
+      <point x="-165.375" y="-208.5" />
+      <point x="55.125" y="698.0" />
+      <point x="1.4500000000000455" y="698.0" />
+      <point x="1.4500000000000455" y="293.0" />
+      <point x="38.39999999999998" y="293.0" />
+      <point x="-92.40000000000003" y="136.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.8588880187940485" x="525.5000000000001" y="1040.1387673231218" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>Production</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

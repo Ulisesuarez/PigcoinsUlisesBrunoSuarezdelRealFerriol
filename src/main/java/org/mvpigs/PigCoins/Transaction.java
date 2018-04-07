@@ -14,7 +14,7 @@ public class Transaction {
     private byte[] signature;
 
 
-    public Transaction(String hash, String prev_hash, PublicKey address, PublicKey address1, double cantidad, String mensaje) {
+    Transaction(String hash, String prev_hash, PublicKey address, PublicKey address1, double cantidad, String mensaje) {
         this.hash=hash;
         this.prev_hash=prev_hash;
         this.pkey_sender=address;
@@ -25,7 +25,7 @@ public class Transaction {
 
     }
 
-    public Transaction() {
+    Transaction() {
 
     }
 
@@ -53,17 +53,41 @@ public class Transaction {
         return message;
     }
 
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
+
     @Override
     public String toString(){
-        String Transaccion="\n hash =  "+this.getHash()+
-                "\n prev_hash = "+this.getPrev_hash()+
-                "\n pkey_sender = "+this.getPkey_sender().hashCode()+
-                "\n pkey_recipient = "+this.getPkey_recipient().hashCode()+
+        return "\n hash =  "+ this.getHash()+
+                "\n prev_hash = "+ this.getPrev_hash()+
+                "\n pkey_sender = "+ this.getPkey_sender().hashCode()+
+                "\n pkey_recipient = "+ this.getPkey_recipient().hashCode()+
                 "\n pigcoins = "+String.valueOf(this.getPigcoins())+
                 "\n message = "+ this.getMessage()+"\n";
-        return Transaccion;
 
 
 
     }
+
+    @Override
+    public boolean equals(Object object){
+        boolean sameSame = false;
+
+        if (object != null && object instanceof Transaction)
+        {
+            sameSame = this.getHash().equals(((Transaction) object).getHash());
+        }
+
+        return sameSame;
+
+    }
+    @Override
+    public int hashCode(){
+
+
+
+    return Integer.valueOf(this.getHash().substring(this.getHash().length()-1));}
+
+
 }

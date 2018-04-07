@@ -1,0 +1,66 @@
+@startuml
+package org.mvpigs.PigCoins {
+  class Transaction {
+    - hash : String
+    - message : String
+    - pigcoins : double
+    - pkey_recipient : PublicKey
+    - pkey_sender : PublicKey
+    - prev_hash : String
+    - signature : byte[]
+    ~ Transaction()
+    ~ Transaction(hash : String, prev_hash : String, address : PublicKey, address1 : PublicKey, cantidad : double, mensaje : String)
+    + equals(object : Object) : boolean
+    + hashCode() : int
+    + toString() : String
+  }
+  class Wallet {
+    - SKey : PrivateKey
+    - address : PublicKey
+    - balance : double
+    - inputTransactions : ArrayList<Transaction>
+    - outputTransactions : ArrayList<Transaction>
+    - total_input : double
+    - total_output : double
+    ~ Wallet()
+    + collectCoins(pigcoins : Double) : Map<String, Double>
+    ~ generateKeyPair()
+    + loadCoins(bChain : BlockChain)
+    + loadInputTransactions(bChain : BlockChain)
+    + loadOutputTransactions(bChain : BlockChain)
+    + sendCoins(address : PublicKey, pigcoins : Double, message : String, bChain : BlockChain)
+    + signTransaction(message : String) : byte[]
+    + toString() : String
+  }
+  class App {
+    + App()
+    + main(args : String[]) {static}
+  }
+  class GenSig {
+    + GenSig()
+    + generateKeyPair() : KeyPair {static}
+    + sign(sKey : PrivateKey, message : String) : byte[] {static}
+    + verify(pubKey : PublicKey, message : String, signedMessage : byte[]) : boolean {static}
+  }
+  class BlockChain {
+    - blockChain : ArrayList<Transaction>
+    ~ BlockChain()
+    + addOrigin(trx : Transaction)
+    - createTransaction(pKey_sender : PublicKey, pKey_recipient : PublicKey, consumedCoins : Map<String, Double>, message : String, signedTransaction : byte[])
+    + getBlockChain() : ArrayList<Transaction>
+    ~ isConsumedCoinValid(consumedCoins : Map<String, Double>, pKey_sender : PublicKey) : boolean
+    ~ isSignatureValid(pKey_sender : PublicKey, message : String, signedTransaction : byte[]) : boolean
+    + loadInputTransactions(address : PublicKey) : ArrayList<Transaction>
+    + loadOutputTransactions(address : PublicKey) : ArrayList<Transaction>
+    + loadWallet(address : PublicKey) : double[]
+    + processTransactions(pKey_sender : PublicKey, pKey_recipient : PublicKey, consumedCoins : Map<String, Double>, message : String, signedTransaction : byte[])
+    + summarize()
+    + summarize(position : Integer)
+    - transaccionEnviadaAOtro(pKey_sender : PublicKey, trx : Transaction, entry : Entry<K, V>) : boolean
+    - transaccionNoEnWallet(pKey_sender : PublicKey, trx : Transaction, entry : Entry<K, V>) : boolean
+  }
+}
+Wallet "  1" -*  "has n   " Transaction
+BlockChain "  1" -*  "has n   " Transaction
+BlockChain o--o Wallet
+@enduml

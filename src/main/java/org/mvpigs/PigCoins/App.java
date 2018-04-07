@@ -1,27 +1,26 @@
 package org.mvpigs.PigCoins;
 
-
-
 import java.security.KeyPair;
 import java.util.Map;
 
 public class App {
 
-    public static void main( String[] args ) {
+    public static void main( String[] args )
+    {
         /**
          * Crea una wallet
          * Genera las claves privada y publica de la wallet
          */
 
         System.out.println("\n" + "Ver clave Privada y clave Pública de una wallet" + "\n" +
-                "===============================================");
+                "==============================================="        );
 
         Wallet wallet_1 = new Wallet();
         KeyPair pair = GenSig.generateKeyPair();
         wallet_1.setSK(pair.getPrivate());
         wallet_1.setAddress(pair.getPublic());
 
-        System.out.println("\n Direccion de la Wallet_1: \n" + wallet_1.getAddress().hashCode());
+        System.out.println("\n Direccion de la Wallet_1: \n" +  wallet_1.getAddress().hashCode());
 
         /**
          * Crea una segunda wallet, esta vez generando sus claves
@@ -57,7 +56,6 @@ public class App {
 
         System.out.println(trx.toString());
 
-
         /**
          * Crea el blockchain
          * y añade transacciones que crean moneda "pigcoins"
@@ -80,6 +78,7 @@ public class App {
 
         // Visualiza el blockchain
         bChain.summarize();
+
         /**
          * Ve la transaccion de una posicion determinada del blockchain
          */
@@ -106,7 +105,6 @@ public class App {
         wallet_2.loadCoins(bChain);
         System.out.println(wallet_2.toString());
 
-
         /**
          * Carga en la wallet el total de transacciones
          * recibidas (aquellas que significan recibir pigcoins)
@@ -131,6 +129,7 @@ public class App {
         wallet_2.loadInputTransactions(bChain);
         System.out.println("Wallet = " + wallet_1.getAddress().hashCode());
         System.out.println("Transacciones = " + wallet_2.getInputTransactions().toString());
+
 
         /**
          * Recargamos la wallet_1
@@ -161,6 +160,8 @@ public class App {
         wallet_2.loadOutputTransactions(bChain);
         System.out.println(wallet_2.toString());
 
+
+
         /**
          * Enviar pigcoins de la wallet_1 a la wallet_2
          * Este es el flujo de trabajo que has de programar.
@@ -181,7 +182,9 @@ public class App {
          *
          * A continuacion se detalla la responsabilidad de cada metodo.
          */
+
         System.out.println("\n" + ">>>>>>>>>>>> Wallet_1 envia transaccion de pigcoins a wallet_2 >>>>>>>>>>>>" + "\n");
+
         /**
          * Primero has de recolectar los suficientes pigcoins de tu wallet
          * Para ello has de eliminar de las transacciones entrantes de la wallet
@@ -212,7 +215,6 @@ public class App {
         String message = "he roto la hucha :(";
         byte[] signedTransaction = wallet_1.signTransaction(message); // usa GenSig.sign()
         wallet_1.sendCoins(wallet_2.getAddress(), pigcoins, message, bChain); // usa wallet.collectCoins() y bChain.processTransactions()
-
 
         /**
          *  wallet.sendCoins() invoca a
@@ -292,13 +294,7 @@ public class App {
         wallet_2.loadInputTransactions(bChain);
         wallet_2.loadOutputTransactions(bChain);
         System.out.println(wallet_2.toString());
+
+
     }
 }
-
-
-
-
-
-
-
-
