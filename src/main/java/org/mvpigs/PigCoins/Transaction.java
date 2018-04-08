@@ -37,15 +37,15 @@ public class Transaction {
         return prev_hash;
     }
 
-    public PublicKey getPkey_sender() {
+    public PublicKey get_PK_sender() {
         return pkey_sender;
     }
 
-    public PublicKey getPkey_recipient() {
+    public PublicKey get_PK_recipient() {
         return pkey_recipient;
     }
 
-    public double getPigcoins() {
+    public double getPigCoins() {
         return pigcoins;
     }
 
@@ -61,9 +61,9 @@ public class Transaction {
     public String toString(){
         return "\n hash =  "+ this.getHash()+
                 "\n prev_hash = "+ this.getPrev_hash()+
-                "\n pkey_sender = "+ this.getPkey_sender().hashCode()+
-                "\n pkey_recipient = "+ this.getPkey_recipient().hashCode()+
-                "\n pigcoins = "+String.valueOf(this.getPigcoins())+
+                "\n pkey_sender = "+ this.get_PK_sender().hashCode()+
+                "\n pkey_recipient = "+ this.get_PK_recipient().hashCode()+
+                "\n pigcoins = "+String.valueOf(this.getPigCoins())+
                 "\n message = "+ this.getMessage()+"\n";
 
 

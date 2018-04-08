@@ -45,8 +45,8 @@ public class BlockChain {
         }
     }
 
-    private void createTransaction(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String, Double> consumedCoins,
-                                   String message, byte[] signedTransaction) {
+    void createTransaction(PublicKey pKey_sender, PublicKey pKey_recipient, Map<String, Double> consumedCoins,
+                           String message, byte[] signedTransaction) {
 
         for ( Map.Entry consumedCoin :consumedCoins.entrySet()){
 
@@ -95,7 +95,7 @@ public class BlockChain {
 
 
         ArrayList<Transaction> inputTransactions=this.getBlockChain().stream().filter(transaction -> transaction.
-                getPkey_recipient().equals(address)).collect(Collectors.toCollection(ArrayList<Transaction>::new));
+                get_PK_recipient().equals(address)).collect(Collectors.toCollection(ArrayList<Transaction>::new));
 
     return inputTransactions;
     }
@@ -103,7 +103,7 @@ public class BlockChain {
 
     public ArrayList<Transaction> loadOutputTransactions(PublicKey address){
         ArrayList<Transaction> outputTransactions=this.getBlockChain().stream().filter(transaction -> transaction.
-                getPkey_sender().equals(address)).collect(Collectors.toCollection(ArrayList::new));
+                get_PK_sender().equals(address)).collect(Collectors.toCollection(ArrayList::new));
 
 
         return outputTransactions;
@@ -116,13 +116,13 @@ public class BlockChain {
         for (Transaction transaction :this.getBlockChain()){
 
 
-            if (transaction.getPkey_recipient().hashCode()==address.hashCode()){
+            if (transaction.get_PK_recipient().hashCode()==address.hashCode()){
 
-                totalInput+=transaction.getPigcoins();
+                totalInput+=transaction.getPigCoins();
             }
-            if (transaction.getPkey_sender().hashCode()==address.hashCode()){
+            if (transaction.get_PK_sender().hashCode()==address.hashCode()){
 
-                totalOutput+=transaction.getPigcoins();
+                totalOutput+=transaction.getPigCoins();
             }
 
         }

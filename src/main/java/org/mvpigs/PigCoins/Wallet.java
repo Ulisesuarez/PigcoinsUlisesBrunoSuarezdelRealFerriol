@@ -15,15 +15,13 @@ public class Wallet {
 
     private PrivateKey SKey=null;
     private PublicKey address=null;
-    private double total_input=0d;
-    private double total_output=0d;
+    private double totalInput =0d;
+    private double totalOutput =0d;
     private double balance=0d;
-    private ArrayList<Transaction> inputTransactions;
-    private ArrayList<Transaction> outputTransactions;
+    private ArrayList<Transaction> inputTransactions=null;
+    private ArrayList<Transaction> outputTransactions=null;
 
     Wallet(){
-        this.inputTransactions= new ArrayList<>();
-        this.outputTransactions= new ArrayList<>();
 
     }
 
@@ -39,8 +37,6 @@ public class Wallet {
         return address;
     }
 
-
-
      void generateKeyPair(){
 
         KeyPair pair = GenSig.generateKeyPair();
@@ -48,12 +44,12 @@ public class Wallet {
         this.setAddress(pair.getPublic());
     }
 
-    public double getTotal_input() {
-        return total_input;
+    public double getTotalInput() {
+        return totalInput;
     }
 
-    public double getTotal_output() {
-        return total_output;
+    public double getTotalOutput() {
+        return totalOutput;
     }
 
     public double getBalance() {
@@ -63,32 +59,31 @@ public class Wallet {
 
     private void setBalance(){
 
-        this.balance=this.getTotal_input()-this.getTotal_output();
+        this.balance=this.getTotalInput()-this.getTotalOutput();
     }
 
     @Override
     public String toString(){
         return "\n Wallet = "+ this.getAddress().hashCode()+
-                "\n Total input = "+String.valueOf(this.getTotal_input())+
-                "\n Total output = "+String.valueOf(this.getTotal_output())+
+                "\n Total input = "+String.valueOf(this.getTotalInput())+
+                "\n Total output = "+String.valueOf(this.getTotalOutput())+
                 "\n Balance = "+String.valueOf(this.getBalance())+"\n";}
 
-    private void setTotal_input(double total_input) {
-        this.total_input = total_input;
+    private void setTotalInput(double totalInput) {
+        this.totalInput = totalInput;
     }
 
-    private void setTotal_output(double total_output) {
-        this.total_output =total_output;
+    private void setTotalOutput(double totalOutput) {
+        this.totalOutput =totalOutput;
     }
 
     public void loadCoins(BlockChain bChain) {
-        this.setTotal_input(bChain.loadWallet(this.getAddress())[0]);
-        this.setTotal_output(bChain.loadWallet(this.getAddress())[1]);
+        this.setTotalInput(bChain.loadWallet(this.getAddress())[0]);
+        this.setTotalOutput(bChain.loadWallet(this.getAddress())[1]);
         this.setBalance();
     }
 
     public void loadInputTransactions(BlockChain bChain) {
-
         this.inputTransactions=bChain.loadInputTransactions(this.getAddress());
     }
 
@@ -98,8 +93,7 @@ public class Wallet {
     }
 
     public void loadOutputTransactions(BlockChain bChain) {
-
-        this.outputTransactions=bChain.loadOutputTransactions(this.getAddress());
+       this.outputTransactions=bChain.loadOutputTransactions(this.getAddress());
     }
 
 
@@ -110,11 +104,19 @@ public class Wallet {
     }
 
     public Map<String,Double> collectCoins(Double pigcoins) {
+        if (this.outputTransactions==null){
+            this.outputTransactions= new ArrayList<>();
+        }
+        if (this.inputTransactions==null){
+
+            this.inputTransactions= new ArrayList<>();
+        }
 
         ArrayList<Transaction>  operativeInputs=new ArrayList<>();
         ArrayList<Transaction>  nonOperativeInputs=new ArrayList<>();
         Map<String,Double> coinsConsumedInTransaction=new HashMap<>();
 
+        if(this.getOutputTransactions().size() > 0){
         for (Transaction outputTransactions:this.getOutputTransactions()){
 
             for (Transaction inputTransaction: this.getInputTransactions()){
@@ -137,37 +139,39 @@ public class Wallet {
 
             }
         }
+        } else {
+            operativeInputs = getInputTransactions();
+        }
 
         for (Transaction transaction : operativeInputs){
 
 
-            if (transaction.getPigcoins() == pigcoins){
+            if (transaction.getPigCoins() == pigcoins){
 
-                coinsConsumedInTransaction.put(transaction.getHash(),transaction.getPigcoins());
+                coinsConsumedInTransaction.put(transaction.getHash(),transaction.getPigCoins());
                 return coinsConsumedInTransaction;
 
             }
             else{
-                if(pigcoins<transaction.getPigcoins()){
+                if(pigcoins<transaction.getPigCoins()){
 
-                    String hash2="CA"+transaction.getHash();
+                    String hash2="CA_"+transaction.getHash();
                     coinsConsumedInTransaction.put(transaction.getHash(),pigcoins);
-                    coinsConsumedInTransaction.put(hash2,transaction.getPigcoins()-pigcoins);
+                    coinsConsumedInTransaction.put(hash2,transaction.getPigCoins()-pigcoins);
                     return coinsConsumedInTransaction;
 
                 }
                 else{
-                    if(pigcoins>transaction.getPigcoins()){
+                    if(pigcoins>transaction.getPigCoins()){
 
 
                         if (pigcoins<this.getBalance()){
 
-                            pigcoins=pigcoins-transaction.getPigcoins();
-                            coinsConsumedInTransaction.put(transaction.getHash(),transaction.getPigcoins());
+                            pigcoins=pigcoins-transaction.getPigCoins();
+                            coinsConsumedInTransaction.put(transaction.getHash(),transaction.getPigCoins());
                         }
                         else{
-                            coinsConsumedInTransaction=new HashMap<>();
-                            return coinsConsumedInTransaction;
+                            return null;
                         }
                     }
                 }
@@ -188,5 +192,9 @@ public class Wallet {
         Map<String, Double> collectedCoins = this.collectCoins(pigcoins);
 
         bChain.processTransactions(this.address,address,collectedCoins,message,signedTransaction);
+    }
+
+    public PrivateKey getSKey() {
+        return this.SKey;
     }
 }
